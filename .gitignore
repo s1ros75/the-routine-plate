@@ -1,0 +1,55 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+log/*.log
+log/development.log
+log/production.log
+log/test.log
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Rails specific (backend/)
+backend/tmp/*
+!backend/tmp/.keep
+backend/log/*
+!backend/log/.keep
+backend/storage/*
+!backend/storage/.keep
+backend/config/master.key
+backend/config/credentials/*.key
+backend/db/*.sqlite3
+backend/db/*.sqlite3-journal
+backend/coverage/
+backend/.byebug_history
+backend/spec/examples.txt
+
+# Node / Frontend (frontend/)
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/coverage/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Docker
+.docker/
+
+# Misc
+*.bak
+*.tmp
+
+# VS Code Local History extension
+.history/
