@@ -1,17 +1,23 @@
 import { useState } from 'react'
 import { Clock, ChevronDown, ChevronUp, Check } from 'lucide-react'
+import type { Recipe, Difficulty } from '@/types'
 
-const DIFFICULTY_LABEL = { easy: '簡単', normal: '普通', hard: 'やや手間' }
-const DIFFICULTY_CLASS = {
+const DIFFICULTY_LABEL: Record<Difficulty, string> = { easy: '簡単', normal: '普通', hard: 'やや手間' }
+const DIFFICULTY_CLASS: Record<Difficulty, string> = {
   easy:   'bg-green-100 text-green-700',
   normal: 'bg-yellow-100 text-yellow-700',
   hard:   'bg-orange-100 text-orange-700',
 }
 
-function RecipeCandidateCard({ recipe, onSelect }) {
+type Props = {
+  recipe: Recipe
+  onSelect: (recipe: Recipe) => void
+}
+
+function RecipeCandidateCard({ recipe, onSelect }: Props) {
   const [instructionsOpen, setInstructionsOpen] = useState(false)
 
-  const nutrition = recipe.nutrition ?? {}
+  const { nutrition } = recipe
 
   return (
     <div className="bg-white border border-gray-100 rounded-2xl shadow-sm hover:shadow-md transition-shadow p-4 space-y-3">
@@ -39,7 +45,7 @@ function RecipeCandidateCard({ recipe, onSelect }) {
       </div>
 
       {/* ── タグ ───────────────────────────────── */}
-      {recipe.tags?.length > 0 && (
+      {recipe.tags.length > 0 && (
         <div className="flex flex-wrap gap-1">
           {recipe.tags.map((tag) => (
             <span key={tag} className="text-[11px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
@@ -53,20 +59,20 @@ function RecipeCandidateCard({ recipe, onSelect }) {
       <div className="grid grid-cols-3 gap-2">
         <div className="bg-green-50 rounded-xl p-2 text-center">
           <p className="text-[10px] text-gray-400">タンパク質</p>
-          <p className="text-sm font-bold text-green-600">{nutrition.protein_g ?? 0}g</p>
+          <p className="text-sm font-bold text-green-600">{nutrition.protein_g}g</p>
         </div>
         <div className="bg-blue-50 rounded-xl p-2 text-center">
           <p className="text-[10px] text-gray-400">塩分</p>
-          <p className="text-sm font-bold text-blue-600">{nutrition.sodium_g ?? 0}g</p>
+          <p className="text-sm font-bold text-blue-600">{nutrition.sodium_g}g</p>
         </div>
         <div className="bg-gray-50 rounded-xl p-2 text-center">
           <p className="text-[10px] text-gray-400">カロリー</p>
-          <p className="text-sm font-bold text-gray-700">{nutrition.calories_kcal ?? 0}kcal</p>
+          <p className="text-sm font-bold text-gray-700">{nutrition.calories_kcal}kcal</p>
         </div>
       </div>
 
       {/* ── 食材リスト ─────────────────────────── */}
-      {recipe.ingredients?.length > 0 && (
+      {recipe.ingredients.length > 0 && (
         <ul className="space-y-1">
           {recipe.ingredients.map((ing) => (
             <li key={ing.id} className="flex items-center justify-between text-xs text-gray-600">
@@ -78,7 +84,7 @@ function RecipeCandidateCard({ recipe, onSelect }) {
       )}
 
       {/* ── 作り方（折りたたみ）─────────────────── */}
-      {recipe.instructions?.length > 0 && (
+      {recipe.instructions.length > 0 && (
         <div className="border-t border-gray-100 pt-2">
           <button
             onClick={() => setInstructionsOpen((v) => !v)}

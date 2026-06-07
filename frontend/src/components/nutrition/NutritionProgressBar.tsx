@@ -1,13 +1,14 @@
-/**
- * @param {string}  label      - 栄養素名 ("タンパク質" / "塩分")
- * @param {number}  value      - 実績値
- * @param {number}  target     - 目標値 (タンパク質: 達成目標 / 塩分: 上限目標)
- * @param {string}  unit       - 単位 (デフォルト "g")
- * @param {'protein'|'sodium'} colorType
- *   - protein: 多いほど良い → 緑で達成感を表現
- *   - sodium:  少ないほど良い → 増えるにつれ黄→赤で警告
- */
-function NutritionProgressBar({ label, value, target, unit = 'g', colorType = 'protein' }) {
+type ColorType = 'protein' | 'sodium'
+
+type Props = {
+  label: string
+  value: number
+  target: number
+  unit?: string
+  colorType?: ColorType
+}
+
+function NutritionProgressBar({ label, value, target, unit = 'g', colorType = 'protein' }: Props) {
   const pct = Math.min((value / target) * 100, 100)
 
   const barColor = (() => {

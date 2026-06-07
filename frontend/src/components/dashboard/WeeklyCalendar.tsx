@@ -3,9 +3,27 @@ import { ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react'
 import DayColumn from './DayColumn'
 import MealRegistrationModal from './MealRegistrationModal'
 import { getMeals, createMeal } from '../../api/meals'
+import type { Meal, MealCreateInput, MealType } from '@/types'
+
+// DayColumn と MealRegistrationModal で共用する日付情報の型
+export type DayInfo = {
+  key: string
+  label: string
+  date: string
+  fullDate: string
+  isToday: boolean
+}
+
+export type SlotMeals = {
+  breakfast: Meal | null
+  lunch: Meal | null
+  dinner: Meal | null
+}
+
+type CalendarMealType = 'breakfast' | 'lunch' | 'dinner'
 
 // 指定週オフセットの月〜日を生成
-function getWeekDays(offset = 0) {
+function getWeekDays(offset = 0): DayInfo[] {
   const today  = new Date()
   const dow    = today.getDay()                        // 0=日〜6=土
   const toMon  = dow === 0 ? -6 : 1 - dow             // 今週月曜への差分
@@ -31,7 +49,7 @@ function getWeekDays(offset = 0) {
   })
 }
 
-function getWeekLabel(days) {
+function getWeekLabel(days: DayInfo[]): string {
   const d           = new Date(days[0].fullDate)
   const year        = d.getFullYear()
   const month       = d.getMonth() + 1
@@ -39,11 +57,16 @@ function getWeekLabel(days) {
   return `${year}年${month}月 第${weekOfMonth}週`
 }
 
-function WeeklyCalendar({ ingredients = [], onRefetch }) {
+type Props = {
+  ingredients: import('@/types').Ingredient[]
+  onRefetch?: () => void
+}
+
+function WeeklyCalendar({ ingredients = [], onRefetch }: Props) {
   const [weekOffset, setWeekOffset] = useState(0)
-  const [meals, setMeals]           = useState([])
+  const [meals, setMeals]           = useState<Meal[]>([])
   const [loading, setLoading]       = useState(true)
-  const [modalState, setModalState] = useState(null) // { day, mealType }
+  const [modalState, setModalState] = useState<{ day: DayInfo; mealType: CalendarMealType } | null>(null)
 
   const days = getWeekDays(weekOffset)
 
@@ -60,13 +83,13 @@ function WeeklyCalendar({ ingredients = [], onRefetch }) {
 
   useEffect(() => { fetchMeals() }, [fetchMeals])
 
-  const getMealForSlot = (fullDate, mealType) =>
+  const getMealForSlot = (fullDate: string, mealType: MealType): Meal | null =>
     meals.find((m) => m.scheduled_at?.slice(0, 10) === fullDate && m.meal_type === mealType) ?? null
 
-  const handleOpenModal  = (day, mealType) => setModalState({ day, mealType })
+  const handleOpenModal  = (day: DayInfo, mealType: CalendarMealType) => setModalState({ day, mealType })
   const handleCloseModal = () => setModalState(null)
 
-  const handleSaveMeal = async (mealData) => {
+  const handleSaveMeal = async (mealData: MealCreateInput) => {
     await createMeal(mealData)   // throws on error → caught by Modal
     await fetchMeals()
     onRefetch?.()

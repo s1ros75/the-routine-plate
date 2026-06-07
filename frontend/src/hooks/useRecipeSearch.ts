@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { searchByIngredients } from '../api/recipes'
+import type { Recipe } from '@/types'
 
 export const useRecipeSearch = () => {
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const [matchedRecipes, setMatchedRecipes] = useState([])
+  const [error, setError] = useState<unknown>(null)
+  const [matchedRecipes, setMatchedRecipes] = useState<Recipe[]>([])
   const [count, setCount] = useState(0)
 
-  const searchRecipes = async (ingredientIds) => {
+  const searchRecipes = async (ingredientIds: number[]) => {
     setLoading(true)
     setError(null)
     try {

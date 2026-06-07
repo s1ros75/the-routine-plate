@@ -1,8 +1,15 @@
 import { Plus } from 'lucide-react'
 import NutritionProgressBar from '../nutrition/NutritionProgressBar'
 import { MEAL_TARGETS } from '../../data/dummyMeals'
+import type { Meal } from '@/types'
 
-function MealCard({ meal, loading = false, onClick }) {
+type Props = {
+  meal: Meal | null
+  loading?: boolean
+  onClick?: () => void
+}
+
+function MealCard({ meal, loading = false, onClick }: Props) {
   if (loading) {
     return <div className="w-full h-[100px] bg-gray-100 rounded-xl animate-pulse" />
   }

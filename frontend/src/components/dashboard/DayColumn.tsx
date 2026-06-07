@@ -1,13 +1,23 @@
 import { Sunrise, Sun, Moon } from 'lucide-react'
 import MealCard from './MealCard'
+import type { DayInfo, SlotMeals } from './WeeklyCalendar'
+
+type CalendarMealType = 'breakfast' | 'lunch' | 'dinner'
 
 const MEAL_SLOTS = [
-  { key: 'breakfast', label: '朝', Icon: Sunrise, iconColor: 'text-orange-300' },
-  { key: 'lunch',     label: '昼', Icon: Sun,     iconColor: 'text-yellow-400' },
-  { key: 'dinner',    label: '夜', Icon: Moon,    iconColor: 'text-indigo-300' },
+  { key: 'breakfast' as const, label: '朝', Icon: Sunrise, iconColor: 'text-orange-300' },
+  { key: 'lunch' as const,     label: '昼', Icon: Sun,     iconColor: 'text-yellow-400' },
+  { key: 'dinner' as const,    label: '夜', Icon: Moon,    iconColor: 'text-indigo-300' },
 ]
 
-function DayColumn({ day, meals = {}, loading = false, onAddMeal }) {
+type Props = {
+  day: DayInfo
+  meals?: SlotMeals
+  loading?: boolean
+  onAddMeal?: (mealType: CalendarMealType) => void
+}
+
+function DayColumn({ day, meals, loading = false, onAddMeal }: Props) {
   const isWeekend = day.label === '土' || day.label === '日'
 
   return (
@@ -40,9 +50,9 @@ function DayColumn({ day, meals = {}, loading = false, onAddMeal }) {
             <span className="text-[10px] text-gray-400 font-medium">{label}</span>
           </div>
           <MealCard
-            meal={meals[key] ?? null}
+            meal={meals?.[key] ?? null}
             loading={loading}
-            onClick={meals[key] ? undefined : () => onAddMeal?.(key)}
+            onClick={meals?.[key] ? undefined : () => onAddMeal?.(key)}
           />
         </div>
       ))}

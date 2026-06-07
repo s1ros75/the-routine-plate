@@ -25,4 +25,3 @@ export const MEAL_TARGETS = {
   protein_g: Math.round(DAILY_TARGETS.protein_g / 3), // 22g
   sodium_g:  parseFloat((DAILY_TARGETS.sodium_g  / 3).toFixed(1)), // 2.5g
 }
-

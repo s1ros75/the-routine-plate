@@ -1,6 +1,20 @@
 import { Dumbbell, Droplets, CheckCircle2 } from 'lucide-react'
+import type { LucideIcon } from 'lucide-react'
+import type { WeeklySummary as WeeklySummaryData } from '@/types'
 
-function StatCard({ icon: Icon, label, value, sub, accent, textAccent, badge }) {
+type Badge = { label: string; style: string }
+
+type StatCardProps = {
+  icon: LucideIcon
+  label: string
+  value: string
+  sub?: string
+  accent: string
+  textAccent?: string
+  badge?: Badge
+}
+
+function StatCard({ icon: Icon, label, value, sub, accent, textAccent, badge }: StatCardProps) {
   return (
     <div className="bg-white rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
       <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${accent}`}>
@@ -33,19 +47,24 @@ function SkeletonCard() {
   )
 }
 
-function proteinBadge(pct) {
+function proteinBadge(pct: number): Badge {
   if (pct >= 80) return { label: `${pct}%`, style: 'bg-green-100 text-green-700' }
   if (pct >= 50) return { label: `${pct}%`, style: 'bg-blue-100 text-blue-600' }
   return          { label: `${pct}%`, style: 'bg-gray-100 text-gray-500' }
 }
 
-function sodiumBadge(avg) {
-  if (avg < 5)  return { label: '良好',   style: 'bg-sky-50 text-sky-600' }
-  if (avg < 7)  return { label: '注意',   style: 'bg-yellow-50 text-yellow-600' }
-  return              { label: '超過',   style: 'bg-red-50 text-red-500' }
+function sodiumBadge(avg: number): Badge {
+  if (avg < 5)  return { label: '良好', style: 'bg-sky-50 text-sky-600' }
+  if (avg < 7)  return { label: '注意', style: 'bg-yellow-50 text-yellow-600' }
+  return              { label: '超過', style: 'bg-red-50 text-red-500' }
 }
 
-function WeeklySummary({ summary, loading }) {
+type Props = {
+  summary: WeeklySummaryData | null
+  loading: boolean
+}
+
+function WeeklySummary({ summary, loading }: Props) {
   if (loading || !summary) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react'
 import { getWeeklySummary } from '../api/meals'
+import type { WeeklySummary } from '@/types'
 
-export const useWeeklySummary = (weekStart = null) => {
-  const [data, setData]       = useState(null)
+export const useWeeklySummary = (weekStart: string | null = null) => {
+  const [data, setData] = useState<WeeklySummary | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError]     = useState(null)
+  const [error, setError] = useState<unknown>(null)
 
-  const fetch = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true)
     setError(null)
     try {
@@ -19,7 +20,7 @@ export const useWeeklySummary = (weekStart = null) => {
     }
   }, [weekStart])
 
-  useEffect(() => { fetch() }, [fetch])
+  useEffect(() => { fetchData() }, [fetchData])
 
-  return { data, loading, error, refetch: fetch }
+  return { data, loading, error, refetch: fetchData }
 }

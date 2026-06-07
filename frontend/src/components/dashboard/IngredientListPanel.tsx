@@ -1,14 +1,29 @@
 import { useState } from 'react'
 import { Search, RefreshCw, Beef } from 'lucide-react'
+import type { Ingredient } from '@/types'
 
-const SORT_OPTIONS = [
-  { key: 'name',     label: '名前順',     fn: (a, b) => a.name.localeCompare(b.name, 'ja') },
-  { key: 'protein',  label: 'タンパク質順', fn: (a, b) => b.protein_per_100g - a.protein_per_100g },
-  { key: 'sodium',   label: '塩分順',     fn: (a, b) => a.sodium_per_100g - b.sodium_per_100g },
-  { key: 'calories', label: 'カロリー順',  fn: (a, b) => b.calories_per_100g - a.calories_per_100g },
+type SortOption = {
+  key: string
+  label: string
+  fn: (a: Ingredient, b: Ingredient) => number
+}
+
+// Ingredient の栄養素フィールドは Rails decimal → string のため Number() で変換
+const SORT_OPTIONS: SortOption[] = [
+  { key: 'name',     label: '名前順',      fn: (a, b) => a.name.localeCompare(b.name, 'ja') },
+  { key: 'protein',  label: 'タンパク質順', fn: (a, b) => Number(b.protein_per_100g) - Number(a.protein_per_100g) },
+  { key: 'sodium',   label: '塩分順',      fn: (a, b) => Number(a.sodium_per_100g) - Number(b.sodium_per_100g) },
+  { key: 'calories', label: 'カロリー順',   fn: (a, b) => Number(b.calories_per_100g) - Number(a.calories_per_100g) },
 ]
 
-const NutritionRow = ({ label, value, unit, valueClass }) => (
+type NutritionRowProps = {
+  label: string
+  value: string
+  unit: string
+  valueClass: string
+}
+
+const NutritionRow = ({ label, value, unit, valueClass }: NutritionRowProps) => (
   <div className="flex items-center justify-between">
     <span className="text-xs text-gray-400">{label}</span>
     <span className={`text-xs font-semibold ${valueClass}`}>
@@ -31,11 +46,18 @@ const SkeletonCard = () => (
   </div>
 )
 
-function IngredientListPanel({ ingredients, loading, error, onRetry }) {
+type Props = {
+  ingredients: Ingredient[]
+  loading: boolean
+  error: string | null
+  onRetry: () => void
+}
+
+function IngredientListPanel({ ingredients, loading, error, onRetry }: Props) {
   const [query, setQuery] = useState('')
   const [sortKey, setSortKey] = useState('name')
 
-  const currentSort = SORT_OPTIONS.find((o) => o.key === sortKey)
+  const currentSort = SORT_OPTIONS.find((o) => o.key === sortKey) ?? SORT_OPTIONS[0]
 
   const filtered = ingredients
     .filter((ing) => ing.name.includes(query))
@@ -138,7 +160,7 @@ function IngredientListPanel({ ingredients, loading, error, onRetry }) {
                       <span className="text-sm font-bold text-gray-800 leading-snug">
                         {ing.name}
                       </span>
-                      {ing.sodium_per_100g === 0 && (
+                      {Number(ing.sodium_per_100g) === 0 && (
                         <span className="flex-shrink-0 text-[10px] font-semibold text-green-600
                                          bg-green-100 px-2 py-0.5 rounded-full whitespace-nowrap">
                           塩分ゼロ
@@ -148,16 +170,16 @@ function IngredientListPanel({ ingredients, loading, error, onRetry }) {
 
                     {/* 栄養素 */}
                     <div className="space-y-1.5 border-t border-gray-100 pt-2.5">
-                      <NutritionRow label="タンパク質" value={ing.protein_per_100g} unit="g" valueClass="text-green-600" />
-                      <NutritionRow label="脂質"       value={ing.fat_per_100g}      unit="g" valueClass="text-yellow-600" />
-                      <NutritionRow label="炭水化物"   value={ing.carbohydrate_per_100g} unit="g" valueClass="text-orange-500" />
+                      <NutritionRow label="タンパク質" value={ing.protein_per_100g}      unit="g"    valueClass="text-green-600" />
+                      <NutritionRow label="脂質"       value={ing.fat_per_100g}           unit="g"    valueClass="text-yellow-600" />
+                      <NutritionRow label="炭水化物"   value={ing.carbohydrate_per_100g}  unit="g"    valueClass="text-orange-500" />
                       <NutritionRow
                         label="塩分"
                         value={ing.sodium_per_100g}
                         unit="g"
-                        valueClass={ing.sodium_per_100g === 0 ? 'text-green-500' : 'text-sky-600'}
+                        valueClass={Number(ing.sodium_per_100g) === 0 ? 'text-green-500' : 'text-sky-600'}
                       />
-                      <NutritionRow label="カロリー"   value={ing.calories_per_100g} unit="kcal" valueClass="text-gray-700" />
+                      <NutritionRow label="カロリー"   value={ing.calories_per_100g}      unit="kcal" valueClass="text-gray-700" />
                     </div>
                   </div>
                 ))}

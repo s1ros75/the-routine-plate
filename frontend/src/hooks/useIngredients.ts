@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react'
 import { getIngredients } from '../api/ingredients'
+import type { Ingredient } from '@/types'
 
 export const useIngredients = () => {
-  const [data, setData] = useState([])
+  const [data, setData] = useState<Ingredient[]>([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
+  const [error, setError] = useState<string | null>(null)
   const [tick, setTick] = useState(0)
 
   const retry = () => setTick((t) => t + 1)
@@ -19,10 +20,9 @@ export const useIngredients = () => {
       .then((ingredients) => {
         if (!cancelled) setData(ingredients)
       })
-      .catch((err) => {
+      .catch((err: { response?: { data?: { error?: string } }; message?: string }) => {
         if (!cancelled) {
-          const message =
-            err.response?.data?.error ?? err.message ?? '食材の取得に失敗しました'
+          const message = err.response?.data?.error ?? err.message ?? '食材の取得に失敗しました'
           setError(message)
         }
       })

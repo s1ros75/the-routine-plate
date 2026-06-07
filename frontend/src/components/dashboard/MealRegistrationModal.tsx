@@ -3,22 +3,38 @@ import { X, Plus, Trash2, Loader2, Calculator, Sparkles, Search } from 'lucide-r
 import NutritionProgressBar from '../nutrition/NutritionProgressBar'
 import RecipeSuggestionsList from './RecipeSuggestionsList'
 import RecipeConfirmStep from './RecipeConfirmStep'
+import type { Ingredient, Nutrition, Recipe, MealCreateInput } from '@/types'
+import type { DayInfo } from './WeeklyCalendar'
 
-const MEAL_TYPE_LABEL = { breakfast: '朝食', lunch: '昼食', dinner: '夕食' }
-const MEAL_TIME       = { breakfast: '08:00:00', lunch: '12:00:00', dinner: '19:00:00' }
+type CalendarMealType = 'breakfast' | 'lunch' | 'dinner'
 
-function computeNutrition(entries, ingredients) {
+const MEAL_TYPE_LABEL: Record<CalendarMealType, string> = { breakfast: '朝食', lunch: '昼食', dinner: '夕食' }
+const MEAL_TIME: Record<CalendarMealType, string>       = { breakfast: '08:00:00', lunch: '12:00:00', dinner: '19:00:00' }
+
+type ModalStep = 'ingredients' | 'recipes' | 'confirm' | 'manual'
+
+type ManualEntry = {
+  ingredient_id: number
+  amount_g: number
+  name: string
+}
+
+// Ingredient の栄養素フィールドは string のため Number() で変換
+function computeNutrition(
+  entries: Array<{ ingredient_id: number; amount_g: number }>,
+  ingredients: Ingredient[]
+): Nutrition {
   const raw = entries.reduce(
     (acc, entry) => {
       const ing = ingredients.find((i) => i.id === entry.ingredient_id)
       if (!ing) return acc
       const r = entry.amount_g / 100
       return {
-        protein_g:      acc.protein_g      + (ing.protein_per_100g      ?? 0) * r,
-        fat_g:          acc.fat_g          + (ing.fat_per_100g          ?? 0) * r,
-        carbohydrate_g: acc.carbohydrate_g + (ing.carbohydrate_per_100g ?? 0) * r,
-        sodium_g:       acc.sodium_g       + (ing.sodium_per_100g       ?? 0) * r,
-        calories_kcal:  acc.calories_kcal  + (ing.calories_per_100g     ?? 0) * r,
+        protein_g:      acc.protein_g      + Number(ing.protein_per_100g) * r,
+        fat_g:          acc.fat_g          + Number(ing.fat_per_100g) * r,
+        carbohydrate_g: acc.carbohydrate_g + Number(ing.carbohydrate_per_100g) * r,
+        sodium_g:       acc.sodium_g       + Number(ing.sodium_per_100g) * r,
+        calories_kcal:  acc.calories_kcal  + Number(ing.calories_per_100g) * r,
       }
     },
     { protein_g: 0, fat_g: 0, carbohydrate_g: 0, sodium_g: 0, calories_kcal: 0 }
@@ -33,15 +49,19 @@ function computeNutrition(entries, ingredients) {
 }
 
 // ── ステップ1: 食材選択 ──────────────────────────────────────────
-function IngredientPickerStep({ ingredients, onSearchRecipes, onManual }) {
-  const [selectedIds, setSelectedIds] = useState(new Set())
+type IngredientPickerStepProps = {
+  ingredients: Ingredient[]
+  onSearchRecipes: (ids: number[]) => void
+  onManual: () => void
+}
+
+function IngredientPickerStep({ ingredients, onSearchRecipes, onManual }: IngredientPickerStepProps) {
+  const [selectedIds, setSelectedIds] = useState(new Set<number>())
   const [query, setQuery]             = useState('')
 
-  const filtered = ingredients.filter((ing) =>
-    ing.name.includes(query)
-  )
+  const filtered = ingredients.filter((ing) => ing.name.includes(query))
 
-  const toggle = (id) => {
+  const toggle = (id: number) => {
     setSelectedIds((prev) => {
       const next = new Set(prev)
       next.has(id) ? next.delete(id) : next.add(id)
@@ -140,13 +160,19 @@ function IngredientPickerStep({ ingredients, onSearchRecipes, onManual }) {
 }
 
 // ── ステップ manual: 自由入力 ─────────────────────────────────────
-function ManualEntryStep({ ingredients, onBack, onSave }) {
+type ManualEntryStepProps = {
+  ingredients: Ingredient[]
+  onBack: () => void
+  onSave: (data: { name: string; ingredients: Array<{ ingredient_id: number; amount_g: number }> }) => Promise<void>
+}
+
+function ManualEntryStep({ ingredients, onBack, onSave }: ManualEntryStepProps) {
   const [mealName, setMealName]     = useState('')
   const [selectedId, setSelectedId] = useState('')
   const [amountG, setAmountG]       = useState('100')
-  const [entries, setEntries]       = useState([])
+  const [entries, setEntries]       = useState<ManualEntry[]>([])
   const [saving, setSaving]         = useState(false)
-  const [error, setError]           = useState(null)
+  const [error, setError]           = useState<string | null>(null)
 
   const nutrition = useMemo(
     () => computeNutrition(entries, ingredients),
@@ -165,7 +191,7 @@ function ManualEntryStep({ ingredients, onBack, onSave }) {
     setError(null)
   }
 
-  const removeEntry = (idx) => setEntries((prev) => prev.filter((_, i) => i !== idx))
+  const removeEntry = (idx: number) => setEntries((prev) => prev.filter((_, i) => i !== idx))
 
   const handleSave = async () => {
     if (!mealName.trim())    { setError('メニュー名を入力してください'); return }
@@ -179,7 +205,8 @@ function ManualEntryStep({ ingredients, onBack, onSave }) {
         ingredients: entries.map(({ ingredient_id, amount_g }) => ({ ingredient_id, amount_g })),
       })
     } catch (err) {
-      const msg = err.response?.data?.errors?.join('、') ?? err.message ?? '保存に失敗しました'
+      const e = err as { response?: { data?: { errors?: string[] } }; message?: string }
+      const msg = e.response?.data?.errors?.join('、') ?? e.message ?? '保存に失敗しました'
       setError(msg)
       setSaving(false)
     }
@@ -285,8 +312,8 @@ function ManualEntryStep({ ingredients, onBack, onSave }) {
           </div>
           <div className="grid grid-cols-3 gap-2 pt-1">
             {[
-              { label: '脂質',     value: `${nutrition.fat_g}g`,           color: 'text-yellow-600' },
-              { label: '炭水化物', value: `${nutrition.carbohydrate_g}g`,  color: 'text-orange-500' },
+              { label: '脂質',     value: `${nutrition.fat_g}g`,            color: 'text-yellow-600' },
+              { label: '炭水化物', value: `${nutrition.carbohydrate_g}g`,   color: 'text-orange-500' },
               { label: 'カロリー', value: `${nutrition.calories_kcal}kcal`, color: 'text-gray-700'   },
             ].map(({ label, value, color }) => (
               <div key={label} className="bg-white rounded-lg p-2 text-center shadow-sm">
@@ -330,13 +357,21 @@ function ManualEntryStep({ ingredients, onBack, onSave }) {
 }
 
 // ── メインモーダル ────────────────────────────────────────────────
-function MealRegistrationModal({ day, mealType, ingredients, onClose, onSave }) {
-  const [step, setStep]                   = useState('ingredients') // 'ingredients' | 'recipes' | 'confirm' | 'manual'
-  const [selectedIngredientIds, setSelectedIngredientIds] = useState([])
-  const [selectedRecipe, setSelectedRecipe] = useState(null)
+type Props = {
+  day: DayInfo
+  mealType: CalendarMealType
+  ingredients: Ingredient[]
+  onClose: () => void
+  onSave: (mealData: MealCreateInput) => Promise<void>
+}
+
+function MealRegistrationModal({ day, mealType, ingredients, onClose, onSave }: Props) {
+  const [step, setStep]                                   = useState<ModalStep>('ingredients')
+  const [selectedIngredientIds, setSelectedIngredientIds] = useState<number[]>([])
+  const [selectedRecipe, setSelectedRecipe]               = useState<Recipe | null>(null)
 
   useEffect(() => {
-    const onKey = (e) => { if (e.key === 'Escape') onClose() }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
   }, [onClose])
@@ -346,17 +381,17 @@ function MealRegistrationModal({ day, mealType, ingredients, onClose, onSave }) 
     return () => { document.body.style.overflow = '' }
   }, [])
 
-  const handleSearchRecipes = (ids) => {
+  const handleSearchRecipes = (ids: number[]) => {
     setSelectedIngredientIds(ids)
     setStep('recipes')
   }
 
-  const handleSelectRecipe = (recipe) => {
+  const handleSelectRecipe = (recipe: Recipe) => {
     setSelectedRecipe(recipe)
     setStep('confirm')
   }
 
-  const handleSaveFromManual = async ({ name, ingredients: ings }) => {
+  const handleSaveFromManual = async ({ name, ingredients: ings }: { name: string; ingredients: Array<{ ingredient_id: number; amount_g: number }> }) => {
     await onSave({
       name,
       meal_type:    mealType,
@@ -365,11 +400,11 @@ function MealRegistrationModal({ day, mealType, ingredients, onClose, onSave }) 
     })
   }
 
-  const handleSaveFromConfirm = async (mealData) => {
+  const handleSaveFromConfirm = async (mealData: MealCreateInput) => {
     await onSave(mealData)
   }
 
-  const stepTitles = {
+  const stepTitles: Record<ModalStep, string> = {
     ingredients: '食材を選ぶ',
     recipes:     'レシピ候補',
     confirm:     '確認・保存',

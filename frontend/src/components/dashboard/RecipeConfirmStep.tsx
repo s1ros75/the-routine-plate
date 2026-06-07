@@ -1,12 +1,21 @@
 import { useState } from 'react'
 import { ArrowLeft, Save, Loader2 } from 'lucide-react'
+import type { Recipe, MealType, MealCreateInput } from '@/types'
 
-function RecipeConfirmStep({ recipe, scheduledAt, mealType, onSave, onBack }) {
+type Props = {
+  recipe: Recipe
+  scheduledAt: string
+  mealType: MealType
+  onSave: (mealData: MealCreateInput) => Promise<void>
+  onBack: () => void
+}
+
+function RecipeConfirmStep({ recipe, scheduledAt, mealType, onSave, onBack }: Props) {
   const [mealName, setMealName] = useState(recipe.name)
   const [saving, setSaving]     = useState(false)
-  const [error, setError]       = useState(null)
+  const [error, setError]       = useState<string | null>(null)
 
-  const nutrition = recipe.nutrition ?? {}
+  const { nutrition } = recipe
 
   const handleSave = async () => {
     if (!mealName.trim()) { setError('メニュー名を入力してください'); return }
@@ -23,7 +32,8 @@ function RecipeConfirmStep({ recipe, scheduledAt, mealType, onSave, onBack }) {
         })),
       })
     } catch (err) {
-      const msg = err.response?.data?.errors?.join('、') ?? err.message ?? '保存に失敗しました'
+      const e = err as { response?: { data?: { errors?: string[] } }; message?: string }
+      const msg = e.response?.data?.errors?.join('、') ?? e.message ?? '保存に失敗しました'
       setError(msg)
       setSaving(false)
     }
@@ -79,15 +89,15 @@ function RecipeConfirmStep({ recipe, scheduledAt, mealType, onSave, onBack }) {
         <div className="grid grid-cols-3 gap-2">
           <div className="bg-white rounded-lg p-2 text-center shadow-sm">
             <p className="text-[10px] text-gray-400">タンパク質</p>
-            <p className="text-xs font-bold text-green-600">{nutrition.protein_g ?? 0}g</p>
+            <p className="text-xs font-bold text-green-600">{nutrition.protein_g}g</p>
           </div>
           <div className="bg-white rounded-lg p-2 text-center shadow-sm">
             <p className="text-[10px] text-gray-400">塩分</p>
-            <p className="text-xs font-bold text-blue-600">{nutrition.sodium_g ?? 0}g</p>
+            <p className="text-xs font-bold text-blue-600">{nutrition.sodium_g}g</p>
           </div>
           <div className="bg-white rounded-lg p-2 text-center shadow-sm">
             <p className="text-[10px] text-gray-400">カロリー</p>
-            <p className="text-xs font-bold text-gray-700">{nutrition.calories_kcal ?? 0}kcal</p>
+            <p className="text-xs font-bold text-gray-700">{nutrition.calories_kcal}kcal</p>
           </div>
         </div>
       </div>

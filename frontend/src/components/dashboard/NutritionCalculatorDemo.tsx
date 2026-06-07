@@ -2,17 +2,29 @@ import { useState } from 'react'
 import { Calculator, Plus, Trash2, Loader2 } from 'lucide-react'
 import { calculateNutrition } from '../../api/meals'
 import NutritionProgressBar from '../nutrition/NutritionProgressBar'
+import type { Ingredient, Nutrition } from '@/types'
 
 const PROTEIN_TARGET  = 60  // g — 1食あたりの目安
 const SODIUM_LIMIT    = 2   // g — 1食あたりの上限目安
 
-function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }) {
-  const [selectedId, setSelectedId] = useState('')
-  const [amountG, setAmountG]       = useState('100')
-  const [entries, setEntries]       = useState([])
-  const [result, setResult]         = useState(null)
+type Entry = {
+  ingredient_id: number
+  amount_g: number
+  name: string
+}
+
+type Props = {
+  ingredients: Ingredient[]
+  loading: boolean
+}
+
+function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }: Props) {
+  const [selectedId, setSelectedId]   = useState('')
+  const [amountG, setAmountG]         = useState('100')
+  const [entries, setEntries]         = useState<Entry[]>([])
+  const [result, setResult]           = useState<Nutrition | null>(null)
   const [calculating, setCalculating] = useState(false)
-  const [calcError, setCalcError]   = useState(null)
+  const [calcError, setCalcError]     = useState<string | null>(null)
 
   const addEntry = () => {
     const id     = Number(selectedId)
@@ -28,7 +40,7 @@ function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }) {
     setCalcError(null)
   }
 
-  const removeEntry = (idx) => {
+  const removeEntry = (idx: number) => {
     setEntries((prev) => prev.filter((_, i) => i !== idx))
     setResult(null)
     setCalcError(null)
@@ -45,7 +57,8 @@ function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }) {
       )
       setResult(data.nutrition)
     } catch (err) {
-      setCalcError(err.response?.data?.error ?? err.message ?? '計算に失敗しました')
+      const e = err as { response?: { data?: { error?: string } }; message?: string }
+      setCalcError(e.response?.data?.error ?? e.message ?? '計算に失敗しました')
     } finally {
       setCalculating(false)
     }
@@ -183,9 +196,9 @@ function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }) {
           {/* その他の栄養素 */}
           <div className="grid grid-cols-3 gap-2 pt-1">
             {[
-              { label: '脂質',     value: result.fat_g,          unit: 'g',   color: 'text-yellow-600' },
-              { label: '炭水化物', value: result.carbohydrate_g, unit: 'g',   color: 'text-orange-500' },
-              { label: 'カロリー', value: result.calories_kcal,  unit: 'kcal',color: 'text-gray-700'   },
+              { label: '脂質',     value: result.fat_g,          unit: 'g',    color: 'text-yellow-600' },
+              { label: '炭水化物', value: result.carbohydrate_g, unit: 'g',    color: 'text-orange-500' },
+              { label: 'カロリー', value: result.calories_kcal,  unit: 'kcal', color: 'text-gray-700'   },
             ].map(({ label, value, unit, color }) => (
               <div key={label} className="bg-white rounded-xl p-3 text-center shadow-sm">
                 <p className="text-[10px] text-gray-400 mb-0.5">{label}</p>

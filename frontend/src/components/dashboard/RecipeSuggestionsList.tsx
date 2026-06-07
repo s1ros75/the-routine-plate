@@ -2,8 +2,15 @@ import { useEffect } from 'react'
 import { ChefHat, ArrowLeft, Loader2, RefreshCw } from 'lucide-react'
 import { useRecipeSearch } from '../../hooks/useRecipeSearch'
 import RecipeCandidateCard from './RecipeCandidateCard'
+import type { Recipe } from '@/types'
 
-function RecipeSuggestionsList({ ingredientIds, onSelectRecipe, onBack }) {
+type Props = {
+  ingredientIds: number[]
+  onSelectRecipe: (recipe: Recipe) => void
+  onBack: () => void
+}
+
+function RecipeSuggestionsList({ ingredientIds, onSelectRecipe, onBack }: Props) {
   const { loading, error, matchedRecipes, searchRecipes } = useRecipeSearch()
 
   useEffect(() => {
@@ -37,7 +44,7 @@ function RecipeSuggestionsList({ ingredientIds, onSelectRecipe, onBack }) {
       )}
 
       {/* ── エラー ───────────────────────────── */}
-      {!loading && error && (
+      {!loading && !!error && (
         <div className="flex flex-col items-center gap-3 py-8">
           <p className="text-sm text-red-500">レシピの取得に失敗しました</p>
           <button
