@@ -39,6 +39,7 @@
 - Tailwind CSS
 - axios
 - lucide-react
+- TypeScript 5.x（strict mode）
 
 ### Backend
 - Ruby 3.3
@@ -202,13 +203,10 @@
 
 ## ライセンス
 
-MIT License
+## 今後の改善予定
 
-## 謝辞
-
-このプロジェクトは Claude Code との対話開発で構築されました。
-個人開発の学習プロジェクトとして、要件定義から実装まで一貫して取り組みました。
-READMEEOF
-echo "=== 完了 ==="
-wc -l README.md
-head -5 README.md
+- [x] TypeScript への移行（strict mode）
+- [ ] ESLint / Prettier の導入
+- [ ] Vitest によるテスト（カバレッジ80%以上）
+- [ ] アクセシビリティ対応（WCAG 2.1 AA準拠）
+- [ ] Vercel + Fly.io へのデプロイ
