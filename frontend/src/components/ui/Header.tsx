@@ -15,11 +15,17 @@ function Header() {
         </div>
       </div>
 
-      <nav className="flex items-center gap-1">
-        <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors">
+      <nav className="flex items-center gap-1" aria-label="メインナビゲーション">
+        <button
+          aria-label="通知"
+          className="p-2 rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+        >
           <Bell size={18} />
         </button>
-        <button className="p-2 rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors">
+        <button
+          aria-label="設定"
+          className="p-2 rounded-lg text-gray-400 hover:bg-gray-50 hover:text-gray-600 transition-colors"
+        >
           <Settings size={18} />
         </button>
         <div className="ml-2 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center ring-2 ring-green-200">

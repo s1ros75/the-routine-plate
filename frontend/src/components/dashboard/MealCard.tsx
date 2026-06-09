@@ -7,9 +7,10 @@ type Props = {
   meal: Meal | null
   loading?: boolean
   onClick?: () => void
+  ariaLabel?: string
 }
 
-function MealCard({ meal, loading = false, onClick }: Props) {
+function MealCard({ meal, loading = false, onClick, ariaLabel = '食事を登録する' }: Props) {
   if (loading) {
     return <div className="w-full h-[100px] bg-gray-100 rounded-xl animate-pulse" />
   }
@@ -18,6 +19,7 @@ function MealCard({ meal, loading = false, onClick }: Props) {
     return (
       <button
         onClick={onClick}
+        aria-label={ariaLabel}
         className="
           w-full h-[100px] flex flex-col items-center justify-center gap-1
           border border-dashed border-gray-200 rounded-xl

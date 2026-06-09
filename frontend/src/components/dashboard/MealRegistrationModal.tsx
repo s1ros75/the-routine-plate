@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useEffect, useMemo, useRef } from 'react'
 import { X, Plus, Trash2, Loader2, Calculator, Sparkles, Search } from 'lucide-react'
 import NutritionProgressBar from '../nutrition/NutritionProgressBar'
 import RecipeSuggestionsList from './RecipeSuggestionsList'
@@ -117,6 +117,7 @@ function IngredientPickerStep({
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="食材を絞り込む..."
+          aria-label="食材を検索"
           className="w-full pl-8 pr-3 py-2 text-sm bg-gray-50 border border-gray-100 rounded-xl
                      focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-300 transition"
         />
@@ -169,6 +170,7 @@ function IngredientPickerStep({
         <button
           onClick={() => onSearchRecipes(Array.from(selectedIds))}
           disabled={selectedIds.size === 0}
+          aria-disabled={selectedIds.size === 0}
           className="flex-1 flex items-center justify-center gap-1.5 text-sm font-semibold
                      text-white bg-green-500 hover:bg-green-600 disabled:opacity-40
                      py-2.5 rounded-xl transition-colors"
@@ -286,6 +288,7 @@ function ManualEntryStep({ ingredients, onBack, onSave }: ManualEntryStepProps) 
               onKeyDown={e => e.key === 'Enter' && addEntry()}
               min="1"
               max="9999"
+              aria-label="使用量（g）"
               className="w-20 text-sm border border-gray-200 rounded-xl px-3 py-2 pr-6 text-right
                          bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-200 transition"
             />
@@ -297,6 +300,8 @@ function ManualEntryStep({ ingredients, onBack, onSave }: ManualEntryStepProps) 
           <button
             onClick={addEntry}
             disabled={!selectedId || Number(amountG) <= 0}
+            aria-disabled={!selectedId || Number(amountG) <= 0}
+            aria-label="食材を追加"
             className="flex items-center gap-1 text-sm font-medium text-white bg-green-500
                        hover:bg-green-600 disabled:opacity-40 px-3 py-2 rounded-xl transition-colors flex-shrink-0"
           >
@@ -388,6 +393,7 @@ function ManualEntryStep({ ingredients, onBack, onSave }: ManualEntryStepProps) 
         <button
           onClick={handleSave}
           disabled={saving}
+          aria-disabled={saving}
           className="flex-1 flex items-center justify-center gap-2 text-sm font-semibold
                      text-white bg-green-500 hover:bg-green-600 disabled:opacity-60
                      py-2.5 rounded-xl transition-colors"
@@ -419,6 +425,14 @@ function MealRegistrationModal({ day, mealType, ingredients, onClose, onSave }: 
   const [step, setStep] = useState<ModalStep>('ingredients')
   const [selectedIngredientIds, setSelectedIngredientIds] = useState<number[]>([])
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
+  const dialogRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const first = dialogRef.current?.querySelector<HTMLElement>(
+      'button:not([disabled]), input:not([disabled])'
+    )
+    first?.focus()
+  }, [])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -477,19 +491,26 @@ function MealRegistrationModal({ day, mealType, ingredients, onClose, onSave }: 
       onClick={onClose}
     >
       <div
+        ref={dialogRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-title"
         className="bg-white rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto"
         onClick={e => e.stopPropagation()}
       >
         {/* ── ヘッダー ─────────────────────────────────────── */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 sticky top-0 bg-white rounded-t-2xl z-10">
           <div>
-            <h2 className="text-sm font-bold text-gray-800">{MEAL_TYPE_LABEL[mealType]}を登録</h2>
+            <h2 id="modal-title" className="text-sm font-bold text-gray-800">
+              {MEAL_TYPE_LABEL[mealType]}を登録
+            </h2>
             <p className="text-xs text-gray-400 mt-0.5">
               {day.date}（{day.label}）— {stepTitles[step]}
             </p>
           </div>
           <button
             onClick={onClose}
+            aria-label="モーダルを閉じる"
             className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors"
           >
             <X size={18} />

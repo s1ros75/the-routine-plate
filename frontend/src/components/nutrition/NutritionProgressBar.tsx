@@ -9,7 +9,7 @@ type Props = {
 }
 
 function NutritionProgressBar({ label, value, target, unit = 'g', colorType = 'protein' }: Props) {
-  const pct = Math.min((value / target) * 100, 100)
+  const pct = target === 0 ? 0 : Math.min((value / target) * 100, 100)
 
   const barColor = (() => {
     if (colorType === 'sodium') {
@@ -39,7 +39,14 @@ function NutritionProgressBar({ label, value, target, unit = 'g', colorType = 'p
           {isOver && colorType === 'sodium' && <span className="ml-1 text-red-400">!</span>}
         </span>
       </div>
-      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+      <div
+        role="progressbar"
+        aria-valuenow={pct}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={`${label}: ${value}/${target}`}
+        className="h-1.5 bg-gray-100 rounded-full overflow-hidden"
+      >
         <div
           className={`h-full rounded-full transition-all duration-500 ${barColor}`}
           style={{ width: `${pct}%` }}

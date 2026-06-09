@@ -29,4 +29,14 @@ describe('NutritionProgressBar', () => {
     render(<NutritionProgressBar label="塩分" value={2} target={5} unit="g" />)
     expect(screen.getByText('2')).toBeInTheDocument()
   })
+
+  it('role="progressbar" が存在する', () => {
+    render(<NutritionProgressBar label="タンパク質" value={10} target={20} />)
+    expect(screen.getByRole('progressbar')).toBeInTheDocument()
+  })
+
+  it('aria-valuenow が正しい値を持つ', () => {
+    render(<NutritionProgressBar label="タンパク質" value={10} target={20} />)
+    expect(screen.getByRole('progressbar')).toHaveAttribute('aria-valuenow', '50')
+  })
 })

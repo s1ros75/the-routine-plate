@@ -47,4 +47,14 @@ describe('MealCard', () => {
     render(<MealCard meal={mockMeal} />)
     expect(screen.getByText('30')).toBeInTheDocument()
   })
+
+  it('未設定ボタンに aria-label が存在する', () => {
+    render(<MealCard meal={null} />)
+    expect(screen.getByRole('button', { name: '食事を登録する' })).toBeInTheDocument()
+  })
+
+  it('ariaLabel prop を渡すと aria-label が上書きされる', () => {
+    render(<MealCard meal={null} ariaLabel="月曜日の昼食を登録する" />)
+    expect(screen.getByRole('button', { name: '月曜日の昼食を登録する' })).toBeInTheDocument()
+  })
 })
