@@ -1,5 +1,7 @@
 # The Routine Plate
 
+![CI](https://github.com/s1ros75/the-routine-plate/actions/workflows/ci.yml/badge.svg)
+
 日々の食事プランニングと栄養管理（特に高タンパク・低塩分）をルーチン化するための個人向けWebアプリケーション。
 
 選んだ食材から該当する定番レシピを自動提案し、栄養素計算・週間サマリーまで一貫して管理できます。
