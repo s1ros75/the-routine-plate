@@ -17,16 +17,22 @@ type StatCardProps = {
 function StatCard({ icon: Icon, label, value, sub, accent, textAccent, badge }: StatCardProps) {
   return (
     <div className="bg-white rounded-2xl p-4 flex items-center gap-4 shadow-sm hover:shadow-md transition-shadow">
-      <div className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${accent}`}>
+      <div
+        className={`w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 ${accent}`}
+      >
         <Icon size={22} className="text-white" />
       </div>
       <div className="min-w-0">
         <p className="text-xs text-gray-400 truncate">{label}</p>
-        <p className={`text-xl font-bold leading-tight ${textAccent ?? 'text-gray-800'}`}>{value}</p>
+        <p className={`text-xl font-bold leading-tight ${textAccent ?? 'text-gray-800'}`}>
+          {value}
+        </p>
         {sub && <p className="text-xs text-gray-400 mt-0.5">{sub}</p>}
       </div>
       {badge && (
-        <span className={`ml-auto text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${badge.style}`}>
+        <span
+          className={`ml-auto text-xs font-semibold px-2 py-0.5 rounded-full flex-shrink-0 ${badge.style}`}
+        >
           {badge.label}
         </span>
       )}
@@ -50,13 +56,13 @@ function SkeletonCard() {
 function proteinBadge(pct: number): Badge {
   if (pct >= 80) return { label: `${pct}%`, style: 'bg-green-100 text-green-700' }
   if (pct >= 50) return { label: `${pct}%`, style: 'bg-blue-100 text-blue-600' }
-  return          { label: `${pct}%`, style: 'bg-gray-100 text-gray-500' }
+  return { label: `${pct}%`, style: 'bg-gray-100 text-gray-500' }
 }
 
 function sodiumBadge(avg: number): Badge {
-  if (avg < 5)  return { label: '良好', style: 'bg-sky-50 text-sky-600' }
-  if (avg < 7)  return { label: '注意', style: 'bg-yellow-50 text-yellow-600' }
-  return              { label: '超過', style: 'bg-red-50 text-red-500' }
+  if (avg < 5) return { label: '良好', style: 'bg-sky-50 text-sky-600' }
+  if (avg < 7) return { label: '注意', style: 'bg-yellow-50 text-yellow-600' }
+  return { label: '超過', style: 'bg-red-50 text-red-500' }
 }
 
 type Props = {
@@ -76,18 +82,17 @@ function WeeklySummary({ summary, loading }: Props) {
   }
 
   const { total_protein_g, total_sodium_g, targets } = summary
-  const weeklyTarget    = targets.weekly_protein_g
-  const dailyTarget     = targets.daily_protein_g
-  const sodiumMax       = targets.daily_sodium_g_max
+  const weeklyTarget = targets.weekly_protein_g
+  const dailyTarget = targets.daily_protein_g
+  const sodiumMax = targets.daily_sodium_g_max
 
-  const totalProtein    = Math.round(total_protein_g * 10) / 10
+  const totalProtein = Math.round(total_protein_g * 10) / 10
   const avgDailyProtein = Math.round((total_protein_g / 7) * 10) / 10
-  const avgDailySodium  = Math.round((total_sodium_g  / 7) * 100) / 100
-  const proteinPct      = Math.round((total_protein_g / weeklyTarget) * 100)
+  const avgDailySodium = Math.round((total_sodium_g / 7) * 100) / 100
+  const proteinPct = Math.round((total_protein_g / weeklyTarget) * 100)
 
-  const sodiumAccent = avgDailySodium < 5
-    ? 'bg-sky-400'
-    : avgDailySodium < 7 ? 'bg-yellow-400' : 'bg-red-400'
+  const sodiumAccent =
+    avgDailySodium < 5 ? 'bg-sky-400' : avgDailySodium < 7 ? 'bg-yellow-400' : 'bg-red-400'
   const sodiumText = avgDailySodium >= 7 ? 'text-red-500' : undefined
 
   return (

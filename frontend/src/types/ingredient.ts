@@ -10,7 +10,4 @@ export type Ingredient = {
   updated_at: string
 }
 
-export type IngredientCreateInput = Omit<
-  Ingredient,
-  'id' | 'created_at' | 'updated_at'
->
+export type IngredientCreateInput = Omit<Ingredient, 'id' | 'created_at' | 'updated_at'>

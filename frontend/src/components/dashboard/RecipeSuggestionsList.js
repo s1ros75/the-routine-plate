@@ -1,0 +1,13 @@
+import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+import { useEffect } from 'react';
+import { ChefHat, ArrowLeft, Loader2, RefreshCw } from 'lucide-react';
+import { useRecipeSearch } from '../../hooks/useRecipeSearch';
+import RecipeCandidateCard from './RecipeCandidateCard';
+function RecipeSuggestionsList({ ingredientIds, onSelectRecipe, onBack }) {
+    const { loading, error, matchedRecipes, searchRecipes } = useRecipeSearch();
+    useEffect(() => {
+        searchRecipes(ingredientIds);
+    }, [searchRecipes, ingredientIds]);
+    return (_jsxs("div", { className: "space-y-4", children: [_jsxs("div", { className: "flex items-center gap-2", children: [_jsx("button", { onClick: onBack, className: "p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 hover:text-gray-600 transition-colors", children: _jsx(ArrowLeft, { size: 16 }) }), _jsxs("div", { className: "flex items-center gap-1.5", children: [_jsx(ChefHat, { size: 16, className: "text-green-500" }), _jsxs("h3", { className: "text-sm font-bold text-gray-800", children: ["\u9078\u3093\u3060", ingredientIds.length, "\u500B\u306E\u98DF\u6750\u3092\u5168\u90E8\u542B\u3080\u30EC\u30B7\u30D4"] })] })] }), loading && (_jsxs("div", { className: "flex flex-col items-center gap-3 py-10", children: [_jsx(Loader2, { size: 24, className: "animate-spin text-green-500" }), _jsx("p", { className: "text-sm text-gray-500", children: "\u30EC\u30B7\u30D4\u3092\u691C\u7D22\u4E2D..." })] })), !loading && !!error && (_jsxs("div", { className: "flex flex-col items-center gap-3 py-8", children: [_jsx("p", { className: "text-sm text-red-500", children: "\u30EC\u30B7\u30D4\u306E\u53D6\u5F97\u306B\u5931\u6557\u3057\u307E\u3057\u305F" }), _jsxs("button", { onClick: () => searchRecipes(ingredientIds), className: "flex items-center gap-1.5 text-sm font-medium text-white\n                       bg-green-500 hover:bg-green-600 px-4 py-2 rounded-xl transition-colors", children: [_jsx(RefreshCw, { size: 14 }), "\u518D\u8A66\u884C"] })] })), !loading && !error && matchedRecipes.length === 0 && (_jsxs("div", { className: "flex flex-col items-center gap-3 py-8", children: [_jsx("p", { className: "text-sm text-gray-500", children: "\u8A72\u5F53\u3059\u308B\u30EC\u30B7\u30D4\u304C\u898B\u3064\u304B\u308A\u307E\u305B\u3093\u3067\u3057\u305F" }), _jsx("button", { onClick: onBack, className: "text-sm font-medium text-green-600 hover:text-green-700 underline", children: "\u98DF\u6750\u3092\u6E1B\u3089\u3057\u3066\u518D\u691C\u7D22" })] })), !loading && !error && matchedRecipes.length > 0 && (_jsx("div", { className: "space-y-3", children: matchedRecipes.map(recipe => (_jsx(RecipeCandidateCard, { recipe: recipe, onSelect: onSelectRecipe }, recipe.id))) }))] }));
+}
+export default RecipeSuggestionsList;

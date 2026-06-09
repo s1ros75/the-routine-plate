@@ -33,11 +33,13 @@ function MealCard({ meal, loading = false, onClick }: Props) {
   }
 
   return (
-    <div className="
+    <div
+      className="
       bg-white border border-gray-100 rounded-xl p-2.5
       shadow-sm hover:shadow-md hover:-translate-y-px
       transition-all duration-200 cursor-pointer
-    ">
+    "
+    >
       <p className="text-xs font-semibold text-gray-800 leading-snug line-clamp-2 mb-2.5">
         {meal.name}
       </p>

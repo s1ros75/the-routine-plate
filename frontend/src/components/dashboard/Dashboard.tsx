@@ -7,7 +7,12 @@ import { useIngredients } from '../../hooks/useIngredients'
 import { useWeeklySummary } from '../../hooks/useWeeklySummary'
 
 function Dashboard() {
-  const { data: ingredients, loading: ingredientsLoading, error: ingredientsError, retry } = useIngredients()
+  const {
+    data: ingredients,
+    loading: ingredientsLoading,
+    error: ingredientsError,
+    retry,
+  } = useIngredients()
   const { data: summary, loading: summaryLoading, refetch: refetchSummary } = useWeeklySummary()
 
   return (
@@ -17,17 +22,12 @@ function Dashboard() {
       <main className="flex-1 w-full max-w-screen-xl mx-auto px-4 py-6 space-y-5">
         <div>
           <h2 className="text-lg font-bold text-gray-800">ダッシュボード</h2>
-          <p className="text-sm text-gray-400 mt-0.5">
-            今週の食事プランと栄養バランスの概要
-          </p>
+          <p className="text-sm text-gray-400 mt-0.5">今週の食事プランと栄養バランスの概要</p>
         </div>
 
         <WeeklySummary summary={summary} loading={summaryLoading} />
 
-        <WeeklyCalendar
-          ingredients={ingredients}
-          onRefetch={refetchSummary}
-        />
+        <WeeklyCalendar ingredients={ingredients} onRefetch={refetchSummary} />
 
         <IngredientListPanel
           ingredients={ingredients}
@@ -36,10 +36,7 @@ function Dashboard() {
           onRetry={retry}
         />
 
-        <NutritionCalculatorDemo
-          ingredients={ingredients}
-          loading={ingredientsLoading}
-        />
+        <NutritionCalculatorDemo ingredients={ingredients} loading={ingredientsLoading} />
       </main>
     </div>
   )

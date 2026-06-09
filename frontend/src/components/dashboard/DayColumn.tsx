@@ -6,8 +6,8 @@ type CalendarMealType = 'breakfast' | 'lunch' | 'dinner'
 
 const MEAL_SLOTS = [
   { key: 'breakfast' as const, label: '朝', Icon: Sunrise, iconColor: 'text-orange-300' },
-  { key: 'lunch' as const,     label: '昼', Icon: Sun,     iconColor: 'text-yellow-400' },
-  { key: 'dinner' as const,    label: '夜', Icon: Moon,    iconColor: 'text-indigo-300' },
+  { key: 'lunch' as const, label: '昼', Icon: Sun, iconColor: 'text-yellow-400' },
+  { key: 'dinner' as const, label: '夜', Icon: Moon, iconColor: 'text-indigo-300' },
 ]
 
 type Props = {
@@ -23,23 +23,29 @@ function DayColumn({ day, meals, loading = false, onAddMeal }: Props) {
   return (
     <div className="flex flex-col gap-2 min-w-0">
       {/* 曜日ヘッダー */}
-      <div className={`
+      <div
+        className={`
         rounded-xl py-2 text-center select-none
-        ${day.isToday
-          ? 'bg-green-500 shadow-md shadow-green-200'
-          : isWeekend
-            ? 'bg-gray-100'
-            : 'bg-white border border-gray-100'}
-      `}>
-        <p className={`text-[11px] font-medium ${day.isToday ? 'text-green-100' : 'text-gray-400'}`}>
+        ${
+          day.isToday
+            ? 'bg-green-500 shadow-md shadow-green-200'
+            : isWeekend
+              ? 'bg-gray-100'
+              : 'bg-white border border-gray-100'
+        }
+      `}
+      >
+        <p
+          className={`text-[11px] font-medium ${day.isToday ? 'text-green-100' : 'text-gray-400'}`}
+        >
           {day.label}
         </p>
-        <p className={`text-base font-bold leading-none mt-0.5 ${day.isToday ? 'text-white' : 'text-gray-700'}`}>
+        <p
+          className={`text-base font-bold leading-none mt-0.5 ${day.isToday ? 'text-white' : 'text-gray-700'}`}
+        >
           {day.date.split('/')[1]}
         </p>
-        {day.isToday && (
-          <span className="text-[9px] text-green-200 font-medium">TODAY</span>
-        )}
+        {day.isToday && <span className="text-[9px] text-green-200 font-medium">TODAY</span>}
       </div>
 
       {/* 食事スロット */}

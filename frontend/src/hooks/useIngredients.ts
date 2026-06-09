@@ -8,7 +8,7 @@ export const useIngredients = () => {
   const [error, setError] = useState<string | null>(null)
   const [tick, setTick] = useState(0)
 
-  const retry = () => setTick((t) => t + 1)
+  const retry = () => setTick(t => t + 1)
 
   useEffect(() => {
     let cancelled = false
@@ -17,7 +17,7 @@ export const useIngredients = () => {
     setError(null)
 
     getIngredients()
-      .then((ingredients) => {
+      .then(ingredients => {
         if (!cancelled) setData(ingredients)
       })
       .catch((err: { response?: { data?: { error?: string } }; message?: string }) => {

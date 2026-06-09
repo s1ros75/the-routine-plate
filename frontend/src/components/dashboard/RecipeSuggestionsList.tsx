@@ -15,7 +15,7 @@ function RecipeSuggestionsList({ ingredientIds, onSelectRecipe, onBack }: Props)
 
   useEffect(() => {
     searchRecipes(ingredientIds)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [searchRecipes, ingredientIds])
 
   return (
     <div className="space-y-4">
@@ -74,12 +74,8 @@ function RecipeSuggestionsList({ ingredientIds, onSelectRecipe, onBack }: Props)
       {/* ── レシピ一覧 ───────────────────────── */}
       {!loading && !error && matchedRecipes.length > 0 && (
         <div className="space-y-3">
-          {matchedRecipes.map((recipe) => (
-            <RecipeCandidateCard
-              key={recipe.id}
-              recipe={recipe}
-              onSelect={onSelectRecipe}
-            />
+          {matchedRecipes.map(recipe => (
+            <RecipeCandidateCard key={recipe.id} recipe={recipe} onSelect={onSelectRecipe} />
           ))}
         </div>
       )}

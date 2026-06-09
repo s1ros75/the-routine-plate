@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { searchByIngredients } from '../api/recipes'
 import type { Recipe } from '@/types'
 
@@ -8,7 +8,7 @@ export const useRecipeSearch = () => {
   const [matchedRecipes, setMatchedRecipes] = useState<Recipe[]>([])
   const [count, setCount] = useState(0)
 
-  const searchRecipes = async (ingredientIds: number[]) => {
+  const searchRecipes = useCallback(async (ingredientIds: number[]) => {
     setLoading(true)
     setError(null)
     try {
@@ -22,7 +22,7 @@ export const useRecipeSearch = () => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   return { loading, error, matchedRecipes, count, searchRecipes }
 }

@@ -20,7 +20,9 @@ export const useWeeklySummary = (weekStart: string | null = null) => {
     }
   }, [weekStart])
 
-  useEffect(() => { fetchData() }, [fetchData])
+  useEffect(() => {
+    fetchData()
+  }, [fetchData])
 
   return { data, loading, error, refetch: fetchData }
 }

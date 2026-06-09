@@ -2,11 +2,15 @@ import { useState } from 'react'
 import { Clock, ChevronDown, ChevronUp, Check } from 'lucide-react'
 import type { Recipe, Difficulty } from '@/types'
 
-const DIFFICULTY_LABEL: Record<Difficulty, string> = { easy: '簡単', normal: '普通', hard: 'やや手間' }
+const DIFFICULTY_LABEL: Record<Difficulty, string> = {
+  easy: '簡単',
+  normal: '普通',
+  hard: 'やや手間',
+}
 const DIFFICULTY_CLASS: Record<Difficulty, string> = {
-  easy:   'bg-green-100 text-green-700',
+  easy: 'bg-green-100 text-green-700',
   normal: 'bg-yellow-100 text-yellow-700',
-  hard:   'bg-orange-100 text-orange-700',
+  hard: 'bg-orange-100 text-orange-700',
 }
 
 type Props = {
@@ -24,9 +28,7 @@ function RecipeCandidateCard({ recipe, onSelect }: Props) {
       {/* ── 名前・説明 ─────────────────────────── */}
       <div>
         <h3 className="text-base font-bold text-gray-800">{recipe.name}</h3>
-        {recipe.description && (
-          <p className="text-xs text-gray-500 mt-0.5">{recipe.description}</p>
-        )}
+        {recipe.description && <p className="text-xs text-gray-500 mt-0.5">{recipe.description}</p>}
       </div>
 
       {/* ── 調理時間・難易度 ───────────────────── */}
@@ -38,7 +40,9 @@ function RecipeCandidateCard({ recipe, onSelect }: Props) {
           </span>
         )}
         {recipe.difficulty && (
-          <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${DIFFICULTY_CLASS[recipe.difficulty] ?? 'bg-gray-100 text-gray-600'}`}>
+          <span
+            className={`text-xs font-semibold px-2 py-0.5 rounded-full ${DIFFICULTY_CLASS[recipe.difficulty] ?? 'bg-gray-100 text-gray-600'}`}
+          >
             {DIFFICULTY_LABEL[recipe.difficulty] ?? recipe.difficulty}
           </span>
         )}
@@ -47,8 +51,11 @@ function RecipeCandidateCard({ recipe, onSelect }: Props) {
       {/* ── タグ ───────────────────────────────── */}
       {recipe.tags.length > 0 && (
         <div className="flex flex-wrap gap-1">
-          {recipe.tags.map((tag) => (
-            <span key={tag} className="text-[11px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">
+          {recipe.tags.map(tag => (
+            <span
+              key={tag}
+              className="text-[11px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full"
+            >
               {tag}
             </span>
           ))}
@@ -74,7 +81,7 @@ function RecipeCandidateCard({ recipe, onSelect }: Props) {
       {/* ── 食材リスト ─────────────────────────── */}
       {recipe.ingredients.length > 0 && (
         <ul className="space-y-1">
-          {recipe.ingredients.map((ing) => (
+          {recipe.ingredients.map(ing => (
             <li key={ing.id} className="flex items-center justify-between text-xs text-gray-600">
               <span>{ing.name}</span>
               <span className="text-gray-400">{ing.amount_g}g</span>
@@ -87,7 +94,7 @@ function RecipeCandidateCard({ recipe, onSelect }: Props) {
       {recipe.instructions.length > 0 && (
         <div className="border-t border-gray-100 pt-2">
           <button
-            onClick={() => setInstructionsOpen((v) => !v)}
+            onClick={() => setInstructionsOpen(v => !v)}
             className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors"
           >
             {instructionsOpen ? <ChevronUp size={13} /> : <ChevronDown size={13} />}

@@ -8,16 +8,16 @@ const client = axios.create({
 })
 
 client.interceptors.request.use(
-  (config) => config,
-  (error) => {
+  config => config,
+  error => {
     console.error('[API] Request error:', error)
     return Promise.reject(error)
   }
 )
 
 client.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  response => response,
+  error => {
     if (error.response) {
       const { status, data } = error.response
       console.error(`[API] ${status} ${error.config?.url}:`, data)

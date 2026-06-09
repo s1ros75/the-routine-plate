@@ -13,13 +13,13 @@ function NutritionProgressBar({ label, value, target, unit = 'g', colorType = 'p
 
   const barColor = (() => {
     if (colorType === 'sodium') {
-      if (pct < 60)  return 'bg-green-400'
-      if (pct < 90)  return 'bg-yellow-400'
+      if (pct < 60) return 'bg-green-400'
+      if (pct < 90) return 'bg-yellow-400'
       return 'bg-red-400'
     }
     // protein — 多いほど緑に近づく
-    if (pct >= 80)  return 'bg-green-500'
-    if (pct >= 50)  return 'bg-green-300'
+    if (pct >= 80) return 'bg-green-500'
+    if (pct >= 50) return 'bg-green-300'
     return 'bg-gray-300'
   })()
 
@@ -31,13 +31,12 @@ function NutritionProgressBar({ label, value, target, unit = 'g', colorType = 'p
         <span className="text-[10px] text-gray-400">{label}</span>
         <span className="text-[10px] font-semibold text-gray-600">
           {value}
-          <span className="font-normal text-gray-400">/{target}{unit}</span>
-          {isOver && colorType === 'protein' && (
-            <span className="ml-1 text-green-500">✓</span>
-          )}
-          {isOver && colorType === 'sodium' && (
-            <span className="ml-1 text-red-400">!</span>
-          )}
+          <span className="font-normal text-gray-400">
+            /{target}
+            {unit}
+          </span>
+          {isOver && colorType === 'protein' && <span className="ml-1 text-green-500">✓</span>}
+          {isOver && colorType === 'sodium' && <span className="ml-1 text-red-400">!</span>}
         </span>
       </div>
       <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">

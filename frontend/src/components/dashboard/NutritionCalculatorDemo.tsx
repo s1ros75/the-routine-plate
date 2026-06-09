@@ -4,8 +4,8 @@ import { calculateNutrition } from '../../api/meals'
 import NutritionProgressBar from '../nutrition/NutritionProgressBar'
 import type { Ingredient, Nutrition } from '@/types'
 
-const PROTEIN_TARGET  = 60  // g — 1食あたりの目安
-const SODIUM_LIMIT    = 2   // g — 1食あたりの上限目安
+const PROTEIN_TARGET = 60 // g — 1食あたりの目安
+const SODIUM_LIMIT = 2 // g — 1食あたりの上限目安
 
 type Entry = {
   ingredient_id: number
@@ -19,21 +19,21 @@ type Props = {
 }
 
 function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }: Props) {
-  const [selectedId, setSelectedId]   = useState('')
-  const [amountG, setAmountG]         = useState('100')
-  const [entries, setEntries]         = useState<Entry[]>([])
-  const [result, setResult]           = useState<Nutrition | null>(null)
+  const [selectedId, setSelectedId] = useState('')
+  const [amountG, setAmountG] = useState('100')
+  const [entries, setEntries] = useState<Entry[]>([])
+  const [result, setResult] = useState<Nutrition | null>(null)
   const [calculating, setCalculating] = useState(false)
-  const [calcError, setCalcError]     = useState<string | null>(null)
+  const [calcError, setCalcError] = useState<string | null>(null)
 
   const addEntry = () => {
-    const id     = Number(selectedId)
+    const id = Number(selectedId)
     const amount = Number(amountG)
     if (!id || !amount || amount <= 0) return
-    const ingredient = ingredients.find((i) => i.id === id)
+    const ingredient = ingredients.find(i => i.id === id)
     if (!ingredient) return
 
-    setEntries((prev) => [...prev, { ingredient_id: id, amount_g: amount, name: ingredient.name }])
+    setEntries(prev => [...prev, { ingredient_id: id, amount_g: amount, name: ingredient.name }])
     setSelectedId('')
     setAmountG('100')
     setResult(null)
@@ -41,7 +41,7 @@ function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }: P
   }
 
   const removeEntry = (idx: number) => {
-    setEntries((prev) => prev.filter((_, i) => i !== idx))
+    setEntries(prev => prev.filter((_, i) => i !== idx))
     setResult(null)
     setCalcError(null)
   }
@@ -53,7 +53,7 @@ function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }: P
     setResult(null)
     try {
       const data = await calculateNutrition(
-        entries.map((e) => ({ ingredient_id: e.ingredient_id, amount_g: e.amount_g }))
+        entries.map(e => ({ ingredient_id: e.ingredient_id, amount_g: e.amount_g }))
       )
       setResult(data.nutrition)
     } catch (err) {
@@ -81,15 +81,17 @@ function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }: P
       <div className="flex gap-2 flex-wrap">
         <select
           value={selectedId}
-          onChange={(e) => setSelectedId(e.target.value)}
+          onChange={e => setSelectedId(e.target.value)}
           disabled={ingredientsLoading || ingredients.length === 0}
           className="flex-1 min-w-[160px] text-sm border border-gray-200 rounded-xl px-3 py-2
                      bg-gray-50 focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-300
                      disabled:opacity-40 transition"
         >
           <option value="">食材を選択...</option>
-          {ingredients.map((ing) => (
-            <option key={ing.id} value={ing.id}>{ing.name}</option>
+          {ingredients.map(ing => (
+            <option key={ing.id} value={ing.id}>
+              {ing.name}
+            </option>
           ))}
         </select>
 
@@ -97,8 +99,8 @@ function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }: P
           <input
             type="number"
             value={amountG}
-            onChange={(e) => setAmountG(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && addEntry()}
+            onChange={e => setAmountG(e.target.value)}
+            onKeyDown={e => e.key === 'Enter' && addEntry()}
             min="1"
             max="9999"
             disabled={ingredientsLoading}
@@ -168,9 +170,7 @@ function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }: P
       </button>
 
       {/* エラー */}
-      {calcError && (
-        <p className="text-sm text-red-500 text-center">{calcError}</p>
-      )}
+      {calcError && <p className="text-sm text-red-500 text-center">{calcError}</p>}
 
       {/* ── 計算結果 ──────────────────────────── */}
       {result && (
@@ -196,9 +196,19 @@ function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }: P
           {/* その他の栄養素 */}
           <div className="grid grid-cols-3 gap-2 pt-1">
             {[
-              { label: '脂質',     value: result.fat_g,          unit: 'g',    color: 'text-yellow-600' },
-              { label: '炭水化物', value: result.carbohydrate_g, unit: 'g',    color: 'text-orange-500' },
-              { label: 'カロリー', value: result.calories_kcal,  unit: 'kcal', color: 'text-gray-700'   },
+              { label: '脂質', value: result.fat_g, unit: 'g', color: 'text-yellow-600' },
+              {
+                label: '炭水化物',
+                value: result.carbohydrate_g,
+                unit: 'g',
+                color: 'text-orange-500',
+              },
+              {
+                label: 'カロリー',
+                value: result.calories_kcal,
+                unit: 'kcal',
+                color: 'text-gray-700',
+              },
             ].map(({ label, value, unit, color }) => (
               <div key={label} className="bg-white rounded-xl p-3 text-center shadow-sm">
                 <p className="text-[10px] text-gray-400 mb-0.5">{label}</p>

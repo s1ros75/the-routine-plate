@@ -12,23 +12,26 @@ type Props = {
 
 function RecipeConfirmStep({ recipe, scheduledAt, mealType, onSave, onBack }: Props) {
   const [mealName, setMealName] = useState(recipe.name)
-  const [saving, setSaving]     = useState(false)
-  const [error, setError]       = useState<string | null>(null)
+  const [saving, setSaving] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   const { nutrition } = recipe
 
   const handleSave = async () => {
-    if (!mealName.trim()) { setError('メニュー名を入力してください'); return }
+    if (!mealName.trim()) {
+      setError('メニュー名を入力してください')
+      return
+    }
     setSaving(true)
     setError(null)
     try {
       await onSave({
-        name:         mealName.trim(),
-        meal_type:    mealType,
+        name: mealName.trim(),
+        meal_type: mealType,
         scheduled_at: scheduledAt,
-        ingredients:  recipe.ingredients.map((ing) => ({
+        ingredients: recipe.ingredients.map(ing => ({
           ingredient_id: ing.id,
-          amount_g:      ing.amount_g,
+          amount_g: ing.amount_g,
         })),
       })
     } catch (err) {
@@ -60,7 +63,7 @@ function RecipeConfirmStep({ recipe, scheduledAt, mealType, onSave, onBack }: Pr
         <input
           type="text"
           value={mealName}
-          onChange={(e) => setMealName(e.target.value)}
+          onChange={e => setMealName(e.target.value)}
           className="w-full text-sm border border-gray-200 rounded-xl px-3 py-2.5
                      focus:outline-none focus:ring-2 focus:ring-green-200 focus:border-green-300 transition"
           autoFocus
@@ -71,7 +74,7 @@ function RecipeConfirmStep({ recipe, scheduledAt, mealType, onSave, onBack }: Pr
       <div>
         <p className="text-xs font-semibold text-gray-600 mb-1.5">含まれる食材</p>
         <ul className="space-y-1.5">
-          {recipe.ingredients.map((ing) => (
+          {recipe.ingredients.map(ing => (
             <li
               key={ing.id}
               className="flex items-center justify-between bg-gray-50 rounded-xl px-3 py-2"
