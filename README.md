@@ -1,5 +1,10 @@
 # The Routine Plate
 
+## デモ
+
+- Frontend: https://the-routine-plate.vercel.app
+- Backend API: https://the-routine-plate.onrender.com
+
 ![CI](https://github.com/s1ros75/the-routine-plate/actions/workflows/ci.yml/badge.svg)
 
 日々の食事プランニングと栄養管理（特に高タンパク・低塩分）をルーチン化するための個人向けWebアプリケーション。
