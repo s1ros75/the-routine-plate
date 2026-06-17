@@ -213,7 +213,7 @@
 ## 今後の改善予定
 
 - [x] TypeScript への移行（strict mode）
-- [ ] ESLint / Prettier の導入
-- [ ] Vitest によるテスト（カバレッジ80%以上）
-- [ ] アクセシビリティ対応（WCAG 2.1 AA準拠）
-- [ ] Vercel + Fly.io へのデプロイ
+- [x] ESLint / Prettier の導入
+- [x] Vitest によるテスト（カバレッジ80%以上）
+- [x] アクセシビリティ対応（WCAG 2.1 AA準拠）
+- [x] Vercel + Fly.io へのデプロイ
