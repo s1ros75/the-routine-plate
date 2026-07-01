@@ -3,7 +3,8 @@ import { X, Plus, Trash2, Loader2, Calculator, Sparkles, Search } from 'lucide-r
 import NutritionProgressBar from '../nutrition/NutritionProgressBar'
 import RecipeSuggestionsList from './RecipeSuggestionsList'
 import RecipeConfirmStep from './RecipeConfirmStep'
-import type { Ingredient, Nutrition, Recipe, MealCreateInput } from '@/types'
+import { DEFAULT_MEAL_TARGETS } from '../../utils/nutritionTargets'
+import type { Ingredient, Nutrition, Recipe, MealCreateInput, MealTargets } from '@/types'
 import type { DayInfo } from './WeeklyCalendar'
 
 type CalendarMealType = 'breakfast' | 'lunch' | 'dinner'
@@ -186,6 +187,7 @@ function IngredientPickerStep({
 // ── ステップ manual: 自由入力 ─────────────────────────────────────
 type ManualEntryStepProps = {
   ingredients: Ingredient[]
+  mealTargets: MealTargets
   onBack: () => void
   onSave: (data: {
     name: string
@@ -193,7 +195,7 @@ type ManualEntryStepProps = {
   }) => Promise<void>
 }
 
-function ManualEntryStep({ ingredients, onBack, onSave }: ManualEntryStepProps) {
+function ManualEntryStep({ ingredients, mealTargets, onBack, onSave }: ManualEntryStepProps) {
   const [mealName, setMealName] = useState('')
   const [selectedId, setSelectedId] = useState('')
   const [amountG, setAmountG] = useState('100')
@@ -345,13 +347,13 @@ function ManualEntryStep({ ingredients, onBack, onSave }: ManualEntryStepProps) 
             <NutritionProgressBar
               label="タンパク質"
               value={nutrition.protein_g}
-              target={20}
+              target={mealTargets.protein_g}
               colorType="protein"
             />
             <NutritionProgressBar
               label="塩分"
               value={nutrition.sodium_g}
-              target={2}
+              target={mealTargets.sodium_g}
               colorType="sodium"
             />
           </div>
@@ -419,9 +421,10 @@ type Props = {
   ingredients: Ingredient[]
   onClose: () => void
   onSave: (mealData: MealCreateInput) => Promise<void>
+  mealTargets?: MealTargets
 }
 
-function MealRegistrationModal({ day, mealType, ingredients, onClose, onSave }: Props) {
+function MealRegistrationModal({ day, mealType, ingredients, onClose, onSave, mealTargets = DEFAULT_MEAL_TARGETS }: Props) {
   const [step, setStep] = useState<ModalStep>('ingredients')
   const [selectedIngredientIds, setSelectedIngredientIds] = useState<number[]>([])
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null)
@@ -547,6 +550,7 @@ function MealRegistrationModal({ day, mealType, ingredients, onClose, onSave }: 
           {step === 'manual' && (
             <ManualEntryStep
               ingredients={ingredients}
+              mealTargets={mealTargets}
               onBack={() => setStep('ingredients')}
               onSave={handleSaveFromManual}
             />

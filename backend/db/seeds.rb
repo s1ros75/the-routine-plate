@@ -3,10 +3,7 @@
 # The data can then be loaded with the bin/rails db:seed command (or created alongside the database with db:setup).
 
 # ゲストユーザー（認証実装前の仮アカウント）
-User.find_or_create_by!(email: 'guest@example.com') do |u|
-  u.name     = 'ゲスト'
-  u.password = 'password123'
-end
+User.find_or_create_guest!
 puts "  seeded: guest user (guest@example.com)"
 
 # 食材マスタ（100gあたりの栄養素）

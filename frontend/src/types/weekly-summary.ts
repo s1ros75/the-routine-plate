@@ -30,6 +30,11 @@ export type WeeklySummaryTargets = {
   daily_sodium_g_max: number
 }
 
+export type MealTargets = {
+  protein_g: number
+  sodium_g: number
+}
+
 export type WeeklySummary = {
   week_start: string
   week_end: string

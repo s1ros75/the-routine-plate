@@ -1,16 +1,17 @@
 import { Plus } from 'lucide-react'
 import NutritionProgressBar from '../nutrition/NutritionProgressBar'
-import { MEAL_TARGETS } from '../../data/dummyMeals'
-import type { Meal } from '@/types'
+import { DEFAULT_MEAL_TARGETS } from '../../utils/nutritionTargets'
+import type { Meal, MealTargets } from '@/types'
 
 type Props = {
   meal: Meal | null
   loading?: boolean
   onClick?: () => void
   ariaLabel?: string
+  mealTargets?: MealTargets
 }
 
-function MealCard({ meal, loading = false, onClick, ariaLabel = '食事を登録する' }: Props) {
+function MealCard({ meal, loading = false, onClick, ariaLabel = '食事を登録する', mealTargets = DEFAULT_MEAL_TARGETS }: Props) {
   if (loading) {
     return <div className="w-full h-[100px] bg-gray-100 rounded-xl animate-pulse" />
   }
@@ -49,13 +50,13 @@ function MealCard({ meal, loading = false, onClick, ariaLabel = '食事を登録
         <NutritionProgressBar
           label="タンパク質"
           value={meal.protein_g}
-          target={MEAL_TARGETS.protein_g}
+          target={mealTargets.protein_g}
           colorType="protein"
         />
         <NutritionProgressBar
           label="塩分"
           value={meal.sodium_g}
-          target={MEAL_TARGETS.sodium_g}
+          target={mealTargets.sodium_g}
           colorType="sodium"
         />
       </div>

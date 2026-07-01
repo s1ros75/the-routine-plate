@@ -3,7 +3,7 @@ import { ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react'
 import DayColumn from './DayColumn'
 import MealRegistrationModal from './MealRegistrationModal'
 import { getMeals, createMeal } from '../../api/meals'
-import type { Meal, MealCreateInput, MealType, Ingredient } from '@/types'
+import type { Meal, MealCreateInput, MealType, Ingredient, MealTargets } from '@/types'
 
 // DayColumn と MealRegistrationModal で共用する日付情報の型
 export type DayInfo = {
@@ -60,9 +60,10 @@ function getWeekLabel(days: DayInfo[]): string {
 type Props = {
   ingredients: Ingredient[]
   onRefetch?: () => void
+  mealTargets?: MealTargets
 }
 
-function WeeklyCalendar({ ingredients = [], onRefetch }: Props) {
+function WeeklyCalendar({ ingredients = [], onRefetch, mealTargets }: Props) {
   const [weekOffset, setWeekOffset] = useState(0)
   const [meals, setMeals] = useState<Meal[]>([])
   const [loading, setLoading] = useState(true)
@@ -147,6 +148,7 @@ function WeeklyCalendar({ ingredients = [], onRefetch }: Props) {
                 }}
                 loading={loading}
                 onAddMeal={mealType => handleOpenModal(day, mealType)}
+                mealTargets={mealTargets}
               />
             ))}
           </div>
@@ -177,6 +179,7 @@ function WeeklyCalendar({ ingredients = [], onRefetch }: Props) {
           ingredients={ingredients}
           onClose={handleCloseModal}
           onSave={handleSaveMeal}
+          mealTargets={mealTargets}
         />
       )}
     </>

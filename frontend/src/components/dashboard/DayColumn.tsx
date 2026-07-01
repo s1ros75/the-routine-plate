@@ -1,6 +1,7 @@
 import { Sunrise, Sun, Moon } from 'lucide-react'
 import MealCard from './MealCard'
 import type { DayInfo, SlotMeals } from './WeeklyCalendar'
+import type { MealTargets } from '@/types'
 
 type CalendarMealType = 'breakfast' | 'lunch' | 'dinner'
 
@@ -15,9 +16,10 @@ type Props = {
   meals?: SlotMeals
   loading?: boolean
   onAddMeal?: (mealType: CalendarMealType) => void
+  mealTargets?: MealTargets
 }
 
-function DayColumn({ day, meals, loading = false, onAddMeal }: Props) {
+function DayColumn({ day, meals, loading = false, onAddMeal, mealTargets }: Props) {
   const isWeekend = day.label === '土' || day.label === '日'
 
   return (
@@ -59,6 +61,7 @@ function DayColumn({ day, meals, loading = false, onAddMeal }: Props) {
             meal={meals?.[key] ?? null}
             loading={loading}
             onClick={meals?.[key] ? undefined : () => onAddMeal?.(key)}
+            mealTargets={mealTargets}
           />
         </div>
       ))}

@@ -2,10 +2,8 @@ import { useState } from 'react'
 import { Calculator, Plus, Trash2, Loader2 } from 'lucide-react'
 import { calculateNutrition } from '../../api/meals'
 import NutritionProgressBar from '../nutrition/NutritionProgressBar'
-import type { Ingredient, Nutrition } from '@/types'
-
-const PROTEIN_TARGET = 60 // g — 1食あたりの目安
-const SODIUM_LIMIT = 2 // g — 1食あたりの上限目安
+import { DEFAULT_MEAL_TARGETS } from '../../utils/nutritionTargets'
+import type { Ingredient, Nutrition, MealTargets } from '@/types'
 
 type Entry = {
   ingredient_id: number
@@ -16,9 +14,10 @@ type Entry = {
 type Props = {
   ingredients: Ingredient[]
   loading: boolean
+  mealTargets?: MealTargets
 }
 
-function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }: Props) {
+function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading, mealTargets = DEFAULT_MEAL_TARGETS }: Props) {
   const [selectedId, setSelectedId] = useState('')
   const [amountG, setAmountG] = useState('100')
   const [entries, setEntries] = useState<Entry[]>([])
@@ -182,13 +181,13 @@ function NutritionCalculatorDemo({ ingredients, loading: ingredientsLoading }: P
             <NutritionProgressBar
               label="タンパク質"
               value={result.protein_g}
-              target={PROTEIN_TARGET}
+              target={mealTargets.protein_g}
               colorType="protein"
             />
             <NutritionProgressBar
               label="塩分"
               value={result.sodium_g}
-              target={SODIUM_LIMIT}
+              target={mealTargets.sodium_g}
               colorType="sodium"
             />
           </div>

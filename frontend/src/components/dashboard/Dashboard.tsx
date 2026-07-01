@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import Header from '../ui/Header'
 import WeeklySummary from './WeeklySummary'
 import WeeklyCalendar from './WeeklyCalendar'
@@ -5,6 +6,7 @@ import IngredientListPanel from './IngredientListPanel'
 import NutritionCalculatorDemo from './NutritionCalculatorDemo'
 import { useIngredients } from '../../hooks/useIngredients'
 import { useWeeklySummary } from '../../hooks/useWeeklySummary'
+import { deriveMealTargets, DEFAULT_MEAL_TARGETS } from '../../utils/nutritionTargets'
 
 function Dashboard() {
   const {
@@ -14,6 +16,11 @@ function Dashboard() {
     retry,
   } = useIngredients()
   const { data: summary, loading: summaryLoading, refetch: refetchSummary } = useWeeklySummary()
+
+  const mealTargets = useMemo(
+    () => (summary?.targets ? deriveMealTargets(summary.targets) : DEFAULT_MEAL_TARGETS),
+    [summary?.targets]
+  )
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -27,7 +34,7 @@ function Dashboard() {
 
         <WeeklySummary summary={summary} loading={summaryLoading} />
 
-        <WeeklyCalendar ingredients={ingredients} onRefetch={refetchSummary} />
+        <WeeklyCalendar ingredients={ingredients} onRefetch={refetchSummary} mealTargets={mealTargets} />
 
         <IngredientListPanel
           ingredients={ingredients}
@@ -36,7 +43,7 @@ function Dashboard() {
           onRetry={retry}
         />
 
-        <NutritionCalculatorDemo ingredients={ingredients} loading={ingredientsLoading} />
+        <NutritionCalculatorDemo ingredients={ingredients} loading={ingredientsLoading} mealTargets={mealTargets} />
       </main>
     </div>
   )

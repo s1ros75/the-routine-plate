@@ -118,10 +118,7 @@ module Api
       private
 
       def guest_user
-        @guest_user ||= User.find_or_create_by!(email: 'guest@example.com') do |u|
-          u.name     = 'ゲスト'
-          u.password = 'password123'
-        end
+        @guest_user ||= User.find_or_create_guest!
       end
 
       def meal_params
